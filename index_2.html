@@ -39,7 +39,7 @@
   .say-hi:hover{box-shadow:0 8px 24px -8px var(--cyan)}
 
   /* HERO */
-  .hero{padding:64px 0 110px;display:grid;grid-template-columns:1.08fr .92fr;gap:40px;align-items:start;min-height:78vh}
+  .hero{padding:64px 0 150px;display:grid;grid-template-columns:1.08fr .92fr;gap:40px;align-items:start;min-height:78vh}
   .eyebrow{font-family:var(--mono);font-size:12.5px;color:var(--cyan);display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;border:1px solid var(--line);padding:6px 12px;border-radius:999px}
   .name-tag{font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,3.4vw,2.6rem);letter-spacing:-.02em;margin-bottom:6px}
   .name-sub{font-family:var(--mono);font-size:13px;color:var(--muted)}
@@ -191,6 +191,7 @@
   .xp-role{font-size:13px;color:var(--cyan);margin-bottom:4px}
   .xp-loc{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:11px}
   .xp-body{color:#c2c7d6;margin:0;font-size:.96rem}
+  .xp-row > div > .stack{margin-top:14px}
 
   .sblock{margin-bottom:24px}
   .sblock .lbl{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:9px}
@@ -291,8 +292,8 @@
         </div>
       </div>
       <h1>I build AI that<br>does <span class="hl">real work.</span></h1>
-      <p class="lede">I'm driven to build models that push what AI can actually do and turn that into products that make a real difference.</p>
-      <p class="lede">Last year I built a computer-vision system that inspects <b>vials and syringes for an IV compounder before they reach a patient</b> — catching potentially life-saving defects a pharmacist may not catch. That's the bar I hold every project to.</p>
+      <p class="lede">I'm driven to leverage and build AI technologies to make impactful products.</p>
+      <p class="lede">Last year I built a computer-vision system that inspects <b>vials and syringes for an IV compounder before they reach a patient</b> — catching potentially life-saving defects a pharmacist may not catch.</p>
       <p class="aside">I chase that impact across various AI applications, such as computer vision, applied ML, and training leading LLMs in software development.</p>
       <div class="hero-cta">
         <a class="btn primary" href="#work">See what I've built<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -412,17 +413,6 @@
     <div class="grid">
 
       <article class="card reveal">
-        <div class="thumb"><svg viewBox="0 0 220 104" fill="none"><path d="M12 86 L52 60 L86 70 L120 40 L158 50 L208 20" stroke="#BFF24E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 86 L52 60 L86 70 L120 40 L158 50 L208 20 L208 96 L12 96 Z" fill="#BFF24E" opacity=".12"/><g fill="#BFF24E"><circle cx="52" cy="60" r="3"/><circle cx="120" cy="40" r="3"/><circle cx="208" cy="20" r="3.5"/></g></svg></div>
-        <div class="cbody">
-          <div class="ctop"><span class="ci"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></span><h4><a href="https://projectpaws.vercel.app/" target="_blank" rel="noopener" style="text-decoration:underline">Live Points Tracker</a></h4></div>
-          <div class="role">Project Paws Club, PSU</div>
-          <p>A live-updating React app for club standings.</p>
-          <div class="more"><div class="h">Real-time standings, no more spreadsheets</div><div class="h">Made point disputes basically disappear</div><div class="h">Members actually checked it daily</div></div>
-          <div class="stack"><span>React</span><span>Node.js</span><span>Realtime</span></div>
-        </div>
-      </article>
-
-      <article class="card reveal">
         <div class="thumb"><svg viewBox="0 0 220 104" fill="none"><g stroke="#FFC44D" stroke-width="2"><rect x="58" y="20" width="30" height="30" rx="4"/><rect x="95" y="20" width="30" height="30" rx="4"/><rect x="132" y="20" width="30" height="30" rx="4"/><rect x="58" y="56" width="30" height="30" rx="4"/><rect x="132" y="56" width="30" height="30" rx="4"/></g><rect x="95" y="56" width="30" height="30" rx="4" fill="#FFC44D" opacity=".25" stroke="#FFC44D" stroke-width="2"/></svg></div>
         <div class="cbody">
           <div class="ctop"><span class="ci"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v9"/></svg></span><h4>NFT Collection Site</h4></div>
@@ -441,7 +431,7 @@
     <div class="shead reveal"><div class="eb"><svg class="ico" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>where I've worked</div><h2>Experience</h2></div>
     <div class="xp-stack">
     <div class="xp-row reveal">
-      <div class="xp-when">Jun 2026 — <span class="now">present</span></div>
+      <div class="xp-when">Jun 2026 — Aug 2026</div>
       <div>
         <div class="xp-co-row">
           <div class="logo"><img src="northrop.png" alt="Northrop Grumman" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="mono" style="display:none">NG</div></div>
@@ -449,7 +439,8 @@
         </div>
         <div class="xp-role">Software Engineer Intern</div>
         <div class="xp-loc">Baltimore, MD</div>
-        <p class="xp-body">Writing and debugging low-level C++ for system software that talks to FPGA-based hardware, on an Agile team — sprint planning, standups, peer reviews. It's sharpening how I think about performance and correctness close to the metal.</p>
+        <p class="xp-body">Writing and debugging low-level C++ for system software that talks to FPGA-based hardware, on an Agile team — sprint planning, standups, peer reviews.</p>
+        <div class="stack"><span>C++</span><span>FPGA</span><span>Embedded Systems</span><span>Agile</span><span>Git</span></div>
       </div>
     </div>
     <div class="xp-row reveal">
@@ -462,6 +453,7 @@
         <div class="xp-role">Software Engineer Intern</div>
         <div class="xp-loc">Allentown, PA</div>
         <p class="xp-body">Built the medical-vision inspection system above — training custom ResNet and YOLO models with EasyOCR for real-time defect detection — and rebuilt a legacy C# label app into a web platform that cut setup from roughly ten minutes to seconds across facilities. This is the work that made me want to do AI for real.</p>
+        <div class="stack"><span>PyTorch</span><span>YOLO</span><span>ResNet</span><span>EasyOCR</span><span>Computer Vision</span><span>C#</span><span>PHP</span></div>
       </div>
     </div>
     <div class="xp-row reveal">
@@ -474,6 +466,7 @@
         <div class="xp-role">AI Trainer — Coding &amp; Software</div>
         <div class="xp-loc">Remote</div>
         <p class="xp-body">Working across multiple coding/software-focused AI training projects, evaluating and building data that sharpens how AI models reason about real codebases. Project Helix, my collaboration with Anthropic, is one example — building benchmark datasets out of real GitHub PRs to test AI coding models.</p>
+        <div class="stack"><span>Python</span><span>Go</span><span>Rust</span><span>Docker</span><span>Git</span></div>
       </div>
     </div>
     </div><!-- /xp-stack -->
@@ -490,7 +483,8 @@
           <h3 class="xp-co">Penn State University</h3>
         </div>
         <div class="xp-role">Bachelor of Science: Computer Science, Expected 12/2026</div>
-        <p class="xp-body">Pennsylvania State University — University Park, PA. Focused on computer vision and applied machine learning, with a low-level systems track on the side.</p>
+        <div class="xp-loc">University Park, PA</div>
+        <p class="xp-body">My coursework runs wide, computer vision and applied machine learning alongside computer architecture and embedded systems. I'm genuinely passionate about both ends, and I think the work that matters happens where they meet.</p>
         <div class="lbl" style="margin-top:18px">minors</div>
         <div class="chiprow">
           <span class="schip">Computer Engineering</span>
@@ -557,7 +551,7 @@
 
 </div>
 
-<footer>Designed &amp; built by Josh Clinton — Penn State · 2026</footer>
+<footer>Josh Clinton · Penn State · 2026</footer>
 
 <script>
   (function(){
