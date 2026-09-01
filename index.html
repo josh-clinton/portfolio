@@ -106,6 +106,8 @@
 
   /* ABOUT */
   .about-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:42px;align-items:start}
+  .about{order:1}
+  .photo{order:2}
   .about p{font-size:1.1rem;color:#cdd1de;margin:0 0 18px}
   .about p b{color:var(--text)}
   .photo{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;border:1px solid var(--line);background:var(--panel)}
@@ -157,6 +159,7 @@
   .sub-label{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin:42px 0 18px;display:flex;align-items:center;gap:10px}
   .sub-label::after{content:"";flex:1;height:1px;background:var(--line)}
   .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+  .grid.two{grid-template-columns:1fr 1fr}
   .card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .3s}
   .card{--a:var(--pink)}
   .card:nth-child(1){--a:var(--pink)}.card:nth-child(2){--a:var(--lime)}.card:nth-child(3){--a:var(--amber)}
@@ -177,6 +180,15 @@
   .thumb.shot{display:block}
   .thumb.shot > img{width:100%;height:100%;object-fit:cover;display:block}
   .thumb.shot > .fb{width:100%;height:100%;place-items:center}
+  .thumb.shot{position:relative}
+  .thumb img.zoom{cursor:zoom-in}
+  .thumb .expand{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:6px;background:rgba(11,13,20,.7);border:1px solid var(--line);display:grid;place-items:center;color:var(--text);opacity:.7;pointer-events:none;transition:.2s}
+  .card:hover .thumb .expand{opacity:1;border-color:var(--a);color:var(--a)}
+  #lightbox{position:fixed;inset:0;z-index:300;background:rgba(6,8,13,.94);backdrop-filter:blur(6px);display:none;place-items:center;padding:28px;cursor:zoom-out}
+  #lightbox.on{display:grid}
+  #lightbox figure{margin:0;display:flex;flex-direction:column;gap:12px;align-items:center;max-width:100%}
+  #lightbox img{max-width:100%;max-height:calc(100vh - 120px);object-fit:contain;border-radius:12px;border:1px solid var(--line);box-shadow:0 30px 90px -30px #000}
+  #lightbox figcaption{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center;max-width:70ch}
   .repo-link{display:inline-flex;align-items:center;gap:7px;margin-top:13px;font-family:var(--mono);font-size:11px;color:var(--muted);transition:color .2s}
   .repo-link:hover{color:var(--a)}
   @media (hover:hover){
@@ -247,19 +259,74 @@
 
   :focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}
 
+  /* ══ RESPONSIVE ═══════════════════════════════════════════════════════
+     A ladder rather than one cliff. Two-column layouts are kept as far down
+     as they still read, and collapse only once a column gets too narrow to
+     hold a sensible line of text.
+     ═══════════════════════════════════════════════════════════════════ */
+
+  /* small laptop — tighten the gutters, nothing restructures */
+  @media (max-width:1000px){
+    .wrap,.nav-inner{padding-left:20px;padding-right:20px}
+    .hero{gap:30px;padding-bottom:110px}
+    .about-grid{gap:30px}
+    .xp-row{grid-template-columns:150px 1fr;gap:20px}
+    .feature .body{padding:26px 26px}
+  }
+
+  /* tablet & phone landscape — still entirely side by side */
   @media (max-width:860px){
-    .hero{grid-template-columns:1fr;gap:24px;min-height:auto;padding:44px 0 26px}
-    .hero-side{order:-1}
-    .stage{min-height:240px}
-    .title-row{flex-wrap:wrap}
-    .about-grid{grid-template-columns:1fr}
-    .photo{max-width:320px}
+    .section{padding:64px 0}
+    .nav-links{gap:18px;font-size:13px}
+    .hero{grid-template-columns:1fr 1fr;gap:22px;min-height:auto;padding:36px 0 56px}
+    .stage,.stage.stage-small{min-height:180px}
+    .grid{grid-template-columns:1fr 1fr}
+    .mini-photo-wrap,.mini-photo{width:84px;height:84px}
+    .mini-badge.bl{top:46px;right:-10px}
+    .mini-badge.br{top:64px;right:-10px}
+    .sec-anim{display:none}       /* decorative canvases would sit over the copy */
+    .feature .body{padding:24px 22px}
+    .feature h3{font-size:1.6rem}
+    .contact{padding:76px 0}
+    /* touch targets: the chat chips are the main interaction on the page */
+    .qchip{padding:12px 16px;font-size:13px}
+    .nav-links a:not(.say-hi){padding:9px 0}
+    .say-hi{padding:11px 16px}
+  }
+
+  /* phone — the wide two-ups stack; cards and the timeline stay side by side */
+  @media (max-width:680px){
+    .hero{grid-template-columns:1fr;gap:24px;padding:26px 0 36px}
+    .stage{display:none}          /* the 3D blob is decoration, and scroll is precious */
+    /* photo drops into the text as a float instead of a slab underneath */
+    .about-grid{display:block}
+    .photo{float:right;width:36%;max-width:150px;margin:4px 0 14px 18px;border-radius:14px}
+    .photo .corner{width:13px;height:13px;border-width:1.5px}
+    .photo .tl{top:8px;left:8px}
+    .photo .br{bottom:8px;right:8px}
+    .about p{margin-bottom:15px}
     .feature{grid-template-columns:1fr}
     .viz{border-left:0;border-top:1px solid var(--line)}
-    .grid{grid-template-columns:1fr}
-    .xp-row{grid-template-columns:1fr;gap:8px}
-    .nav-links a:not(.say-hi){display:none}
+    .xp-row{grid-template-columns:104px 1fr;gap:16px;padding:20px 0}
+    .grid.two{grid-template-columns:1fr}
+    .about p{font-size:1.04rem}
   }
+
+  /* narrow phone — one column of cards, nav collapses to the CTA */
+  @media (max-width:520px){
+    .wrap,.nav-inner{padding-left:16px;padding-right:16px}
+    .section{padding:52px 0}
+    .grid,.grid.two{grid-template-columns:1fr}
+    .nav-links a:not(.say-hi){display:none}
+    .xp-row{grid-template-columns:84px 1fr;gap:12px}
+    .xp-when{font-size:11.5px}
+    .name-sub{font-size:12px}
+    .feature .body{padding:22px 18px}
+    .card .cbody{padding:16px 17px 18px}
+    .contact{padding:64px 0}
+    #lightbox{padding:14px}
+  }
+
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}.reveal{opacity:1;transform:none}.viz .scanbar{display:none}}
 </style>
 </head>
@@ -312,13 +379,12 @@
         <div class="ask-card reveal" aria-label="Quick chat with Josh">
           <div class="ask-head">
             <div class="av">J</div>
-            <div class="t"><b>Ask me anything</b><span><svg class="ico" style="width:11px;height:11px" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="6"/></svg>I'll keep it real</span></div>
+            <div class="t"><b>Ask me anything</b></div>
           </div>
           <div class="stream" id="stream">
-            <div class="bub josh">Hey — pick a question and I'll tell you straight.</div>
+            <div class="bub josh">Hey — ask me about myself.</div>
           </div>
           <div class="chips" id="chips"></div>
-          <div class="ask-note">the full AI version of me that answers anything is in the works</div>
         </div>
       </section>
 
@@ -333,11 +399,6 @@
   <section class="section" id="about">
     <div class="shead reveal"><div class="eb"><svg class="ico" style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>about me</div><h2>What I'm actually about</h2></div>
     <div class="about-grid">
-      <div class="about reveal reveal-left">
-        <p>I'm hooked on the exact moment an AI model stops being an experiment and starts changing something real. At <b>B. Braun</b>, that moment was watching my vision system flag a mislabeled vial that a person had missed — software quietly standing between a mistake and a patient.</p>
-        <p>I'm a CS student at <b>Penn State</b>, graduating December 2026, and I'm very passionate about learning the use cases for computer vision and applied machine learning — from the medical-vision system above to training the models behind AI coding tools at <b>Handshake AI</b>. I've also got a real interest in computer engineering — my time at <b>Northrop Grumman</b> writing C++ for FPGA-based hardware has pushed me past CS into embedded systems, and given me a better feel for how software actually has to behave inside a real product.</p>
-        <p>I'm a self-driven learner, and I'm always eager to pick up something new — a new corner of AI, a language I haven't touched, or a problem I don't yet know how to solve. I'm just as passionate about training my own brain as I am about training a neural network.</p>
-      </div>
       <div class="photo reveal reveal-right">
         <span class="corner tl"></span><span class="corner br"></span>
         <img src="me.png" alt="Josh Clinton" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
@@ -346,6 +407,10 @@
           <b>Your photo goes here</b>
           <span>Save a headshot as <strong>me.png</strong> next to this file</span>
         </div>
+      </div>
+      <div class="about reveal reveal-left">
+        <p>I'm a CS student at <b>Penn State</b>, graduating December 2026, and I'm hooked on the exact moment an AI model stops being an experiment and starts changing something real. At <b>B. Braun</b>, that moment was watching my vision system flag a mislabeled vial that a person had missed — software quietly standing between a mistake and a patient. That's what pulls me toward computer vision and applied machine learning — from that system to training the models behind AI coding tools at <b>Handshake AI</b>. I've also got a real interest in computer engineering — my time at <b>Northrop Grumman</b> writing C++ for FPGA-based hardware has pushed me past CS into embedded systems, and given me a better feel for how software actually has to behave inside a real product.</p>
+        <p>I'm a self-driven learner, and I'm always eager to pick up something new — a new corner of AI, a language I haven't touched, or a problem I don't yet know how to solve. Lately that has meant working through the math and the algorithms behind ray tracing by writing a Monte Carlo path tracer in C++ from scratch, and getting a feel for how neural networks actually behave by building one in Python to train a car to drive itself. I'm just as passionate about training my own brain as I am about training a neural network.</p>
       </div>
     </div>
   </section>
@@ -399,6 +464,18 @@
     <div class="grid">
 
       <article class="card reveal">
+        <div class="thumb shot"><img class="zoom" src="nncar.png" alt="The trained car driving a generated track, beside a live view of its neural network" style="object-position:50% 0" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="fb" style="display:none"><svg viewBox="0 0 220 104" fill="none"><g stroke="#FF4D9D" stroke-width="1.4" opacity=".5"><path d="M46 22 106 52M46 52 106 52M46 82 106 52M106 52 168 34M106 52 168 70"/></g><g stroke="#FF4D9D" stroke-width="2"><circle cx="46" cy="22" r="7"/><circle cx="46" cy="52" r="7"/><circle cx="46" cy="82" r="7"/><circle cx="168" cy="34" r="7"/><circle cx="168" cy="70" r="7"/></g><circle cx="106" cy="52" r="9" fill="#FF4D9D"/></svg></div><span class="expand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7"/></svg></span></div>
+        <div class="cbody">
+          <div class="ctop"><span class="ci"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="12" cy="12" r="2.6"/><circle cx="19" cy="7" r="2.4"/><circle cx="19" cy="17" r="2.4"/><path d="M7.2 7.2 9.7 10.6M7.2 16.8 9.7 13.4M14.4 10.8 16.8 8.6M14.4 13.2 16.8 15.4"/></svg></span><h4>Neural Car</h4></div>
+          <div class="role">neural net + genetic algorithm, from scratch in numpy</div>
+          <p>A car that teaches itself to drive randomly generated tracks. Both the network and the genetic algorithm are written from scratch — no PyTorch, no autograd, no optimizer.</p>
+          <div class="more"><div class="h">Seven distance rays plus the car's own speed feed 8 inputs through 10 tanh units to steering and throttle</div><div class="h">Learns by evolution rather than gradients: tournament selection, uniform crossover, 15% gaussian mutation, and elitism so a good generation can't be lost to bad dice</div></div>
+          <div class="stack"><span>Python</span><span>NumPy</span><span>Pygame</span><span>Neural Networks</span><span>Genetic Algorithms</span></div>
+          <a class="repo-link" href="https://github.com/josh-clinton/nn-from-scratch-car" target="_blank" rel="noopener"><svg class="ico" style="width:13px;height:13px" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.59.69.49A10.02 10.02 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"/></svg>josh-clinton/nn-from-scratch-car</a>
+        </div>
+      </article>
+
+      <article class="card reveal">
         <div class="thumb"><svg viewBox="0 0 220 104" fill="none"><g stroke="#34E3E0" stroke-width="2"><circle cx="46" cy="52" r="18"/><circle cx="110" cy="30" r="14"/><circle cx="110" cy="74" r="14"/><circle cx="174" cy="52" r="18"/></g><g stroke="#34E3E0" stroke-width="1.6" opacity=".6"><path d="M62 48 96 34M62 56 96 70M124 34 158 48M124 70 158 56"/></g><g fill="#34E3E0"><circle cx="46" cy="52" r="3"/><circle cx="174" cy="52" r="3"/></g></svg></div>
         <div class="cbody">
           <div class="ctop"><span class="ci"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><h4>Project Helix</h4></div>
@@ -415,12 +492,12 @@
     <div class="grid">
 
       <article class="card reveal">
-        <div class="thumb shot"><img src="raytracer.png" alt="Path-traced render: a field of diffuse, metal, and glass spheres" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="fb" style="display:none"><svg viewBox="0 0 220 104" fill="none"><g stroke="#FF4D9D" stroke-width="1.3" opacity=".4" stroke-dasharray="4 3"><rect x="92" y="14" width="112" height="78" rx="4"/><rect x="100" y="22" width="52" height="52" rx="3"/><rect x="148" y="38" width="50" height="46" rx="3"/></g><g stroke="#FF4D9D" stroke-width="1.6" opacity=".75"><path d="M24 52 109 44M24 52 105 77M24 52 98 20"/></g><g stroke="#FF4D9D" stroke-width="1.6" opacity=".45" stroke-dasharray="3 3"><path d="M109 44 162 30M105 77 162 71"/></g><g stroke="#FF4D9D" stroke-width="2"><circle cx="126" cy="48" r="18"/><circle cx="173" cy="62" r="14"/><circle cx="112" cy="80" r="8"/></g><circle cx="119" cy="41" r="4" fill="#FF4D9D" opacity=".55"/><g fill="#FF4D9D"><path d="M13 44 25 52 13 60z"/><circle cx="109" cy="44" r="3"/><circle cx="105" cy="77" r="3"/><circle cx="162" cy="71" r="3"/></g></svg></div></div>
+        <div class="thumb shot"><img class="zoom" src="raytracer.png" alt="Path-traced render: a field of diffuse, metal, and glass spheres" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="fb" style="display:none"><svg viewBox="0 0 220 104" fill="none"><g stroke="#FF4D9D" stroke-width="1.3" opacity=".4" stroke-dasharray="4 3"><rect x="92" y="14" width="112" height="78" rx="4"/><rect x="100" y="22" width="52" height="52" rx="3"/><rect x="148" y="38" width="50" height="46" rx="3"/></g><g stroke="#FF4D9D" stroke-width="1.6" opacity=".75"><path d="M24 52 109 44M24 52 105 77M24 52 98 20"/></g><g stroke="#FF4D9D" stroke-width="1.6" opacity=".45" stroke-dasharray="3 3"><path d="M109 44 162 30M105 77 162 71"/></g><g stroke="#FF4D9D" stroke-width="2"><circle cx="126" cy="48" r="18"/><circle cx="173" cy="62" r="14"/><circle cx="112" cy="80" r="8"/></g><circle cx="119" cy="41" r="4" fill="#FF4D9D" opacity=".55"/><g fill="#FF4D9D"><path d="M13 44 25 52 13 60z"/><circle cx="109" cy="44" r="3"/><circle cx="105" cy="77" r="3"/><circle cx="162" cy="71" r="3"/></g></svg></div><span class="expand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M15 3h6v6M21 3l-7 7M9 21H3v-6M3 21l7-7"/></svg></span></div>
         <div class="cbody">
           <div class="ctop"><span class="ci"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="15.5" cy="12" r="5.5"/><path d="M2 5.5 9.4 9.4M2 12h7.6M2 18.5 9.4 14.6"/></svg></span><h4>Monte Carlo Path Tracer</h4></div>
           <div class="role">C++17, written from scratch — no engine</div>
           <div class="soon-flag"><span class="pulse"></span>in progress · core renderer complete</div>
-          <p>A multithreaded CPU path tracer rendering diffuse, metal, and glass spheres with physically based global illumination — every bounce traced, nothing baked.</p>
+          <p>A multithreaded CPU path tracer rendering diffuse, metal, and glass spheres with physically based global illumination.</p>
           <div class="more"><div class="h">Monte Carlo integration — each pixel averages N independently sampled ray paths, each bounce a sample of the rendering equation</div><div class="h">Lambertian, metal, and dielectric materials, with Snell's law and Schlick's approximation for glass</div><div class="h">BVH acceleration: 6.24× faster than linear scan on a 487-sphere render, scaling to 9.2× at ~785 objects</div><div class="h">75-config benchmark sweep across image size, object count, camera angle, and material mix — charts and tables regenerate with one command</div></div>
           <div class="stack"><span>C++17</span><span>Multithreading</span><span>BVH</span><span>Monte Carlo</span><span>Python</span></div>
           <a class="repo-link" href="https://github.com/josh-clinton/raytracer" target="_blank" rel="noopener"><svg class="ico" style="width:13px;height:13px" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.5 2.87 8.32 6.84 9.67.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.59.69.49A10.02 10.02 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"/></svg>josh-clinton/raytracer</a>
@@ -507,7 +584,7 @@
           <span class="schip">Cybersecurity Computational Foundations</span>
         </div>
         <div class="sub-label" style="margin:28px 0 16px">coursework projects</div>
-        <div class="grid" style="grid-template-columns:1fr 1fr">
+        <div class="grid two">
         <article class="card reveal">
           <div class="thumb"><svg viewBox="0 0 220 104" fill="none"><g stroke="#FF4D9D" stroke-width="2"><rect x="12" y="38" width="30" height="28" rx="3"/><rect x="55" y="38" width="30" height="28" rx="3"/><rect x="98" y="38" width="30" height="28" rx="3"/><rect x="141" y="38" width="30" height="28" rx="3"/><rect x="184" y="38" width="24" height="28" rx="3"/></g><g stroke="#FF4D9D" stroke-width="2" opacity=".55"><path d="M42 52h13M85 52h13M128 52h13M171 52h13"/></g><g fill="#FF4D9D" opacity=".9"><path d="M53 49l4 3-4 3zM96 49l4 3-4 3zM139 49l4 3-4 3zM182 49l4 3-4 3z"/></g><text x="27" y="56" fill="#FF4D9D" font-size="8" font-family="monospace" text-anchor="middle">IF</text><text x="70" y="56" fill="#FF4D9D" font-size="8" font-family="monospace" text-anchor="middle">ID</text><text x="113" y="56" fill="#FF4D9D" font-size="8" font-family="monospace" text-anchor="middle">EX</text><text x="156" y="56" fill="#FF4D9D" font-size="7" font-family="monospace" text-anchor="middle">MEM</text><text x="196" y="56" fill="#FF4D9D" font-size="8" font-family="monospace" text-anchor="middle">WB</text></svg></div>
           <div class="cbody">
@@ -573,6 +650,7 @@
     const mount=document.getElementById('hero3d'),stage=document.getElementById('stage'),cap=document.getElementById('cap');
     if(!window.THREE){stage.classList.add('fallback');return;}
     const rdm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!mount.clientWidth||!mount.clientHeight)return;   // stage hidden on phones
     const W=()=>mount.clientWidth,H=()=>mount.clientHeight;
     let renderer,scene,cam;
     try{
@@ -586,7 +664,7 @@
     let mx=0,my=0,target=null;
     stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect();mx=((e.clientX-r.left)/r.width-.5);my=((e.clientY-r.top)/r.height-.5);});
     stage.addEventListener('pointerleave',()=>{mx=0;my=0;});
-    addEventListener('resize',()=>{if(!renderer)return;renderer.setSize(W(),H());cam.aspect=W()/H();cam.updateProjectionMatrix();});
+    addEventListener('resize',()=>{if(!renderer||!W()||!H())return;renderer.setSize(W(),H());cam.aspect=W()/H();cam.updateProjectionMatrix();});
 
     function buildAbstract(){
       cap.textContent='';
@@ -635,6 +713,7 @@
   // section decorative canvas animations
   (function(){
     if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+    if(innerWidth<=860)return;   // hidden by the responsive rules
 
     function mkCanvas(sec,w,h){
       const cv=document.createElement('canvas');
@@ -902,6 +981,40 @@
     new IntersectionObserver(([e])=>{if(e.isIntersecting)xpStack.classList.add('tl-go');},{threshold:.15}).observe(xpStack);
   }
 
+  /* ── FULL-SIZE IMAGE VIEWER ──────────────────────────────────────────────
+     The project screenshots are cropped hard to fit the 104px thumb strip,
+     so clicking one opens the whole frame. Click anywhere or hit Esc to close.
+     ────────────────────────────────────────────────────────────────────── */
+  (function(){
+    const zoomables=[...document.querySelectorAll('img.zoom')];
+    if(!zoomables.length)return;
+    const lb=document.createElement('div');
+    lb.id='lightbox';lb.setAttribute('aria-hidden','true');lb.tabIndex=-1;
+    lb.innerHTML='<figure><img alt=""><figcaption></figcaption></figure>';
+    document.body.appendChild(lb);
+    const big=lb.querySelector('img'),cap=lb.querySelector('figcaption');
+    let opener=null;
+    const open=img=>{
+      opener=img;big.src=img.src;big.alt=img.alt;cap.textContent=img.alt;
+      lb.classList.add('on');lb.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';lb.focus();
+    };
+    const close=()=>{
+      lb.classList.remove('on');lb.setAttribute('aria-hidden','true');
+      document.body.style.overflow='';if(opener)opener.focus();
+    };
+    zoomables.forEach(img=>{
+      img.tabIndex=0;img.setAttribute('role','button');
+      img.title='Click to see the full image';
+      img.addEventListener('click',()=>open(img));
+      img.addEventListener('keydown',e=>{
+        if(e.key==='Enter'||e.key===' '){e.preventDefault();open(img);}
+      });
+    });
+    lb.addEventListener('click',close);
+    addEventListener('keydown',e=>{if(e.key==='Escape'&&lb.classList.contains('on'))close();});
+  })();
+
   /* ── HERO CHAT ──────────────────────────────────────────────────────────
      Branching Q&A. Each node: chip = short button label, say = what shows
      as the visitor's message (defaults to chip), a = one or two bubbles,
@@ -915,100 +1028,74 @@
       "AI that does something real. The one I care about most is a computer-vision system I built at B. Braun that inspects medical vials and syringes — it catches labeling and fill defects before they reach a patient.",
       "That's the whole point for me: machine learning that leaves the notebook and goes to work."
     ],next:["how","now","cv_llm"]},
-
+    now:{chip:"What are you working on now?",a:[
+      "Mostly side projects. I'm learning ray tracing by writing a Monte Carlo path tracer in C++ from scratch, and I've got a car that teaches itself to drive — a neural net and a genetic algorithm, no PyTorch anywhere.",
+      "Both exist to understand how something works, not to use it. I'm a self-driven learner — building the thing from scratch is the only way it really sticks."
+    ],next:["side","tool","learn_how"]},
     proudest:{chip:"Proudest of?",say:"What are you proudest of?",a:[
-      "Same system. The first time it flagged a mislabeled vial a person had missed, it stopped being a project — that's software sitting between a mistake and a patient.",
+      "The vision system I built at B. Braun. The first time it flagged a mislabeled vial that a person had missed, it stopped being a project — that's software sitting between a mistake and a patient.",
       "Getting there took a lot of arguing with myself about what the thing should do when it isn't sure."
     ],next:["wrong","how","patent"]},
-
     vibe:{chip:"Your vibe?",say:"What's your vibe?",a:[
       "Self-driven. I'm always chasing the next thing worth learning — a new corner of AI, a language I haven't touched, a problem I don't know how to solve yet.",
       "Just as into training my own brain as training a neural network."
-    ],next:["stuck","learn_how","hard"]},
-
+    ],next:["stuck","learn_how","now"]},
     hire:{chip:"Can I hire you?",a:[
       "Hopefully. I graduate December 2026 and I'm looking for roles where AI meets the real world. My email's right below."
-    ],next:["roles","when","why"]},
-
-    hard:{chip:"Ask me something hard",a:[
-      "Go for it."
-    ],next:["hottake","cs_hw","tool"]},
+    ],next:["roles","when","proudest"]},
 
     /* — B. Braun branch — */
     how:{chip:"How did it actually work?",a:[
-      "Camera over the line, three models doing different jobs. YOLO locates the vial and the label, a ResNet I trained classifies the product, EasyOCR reads the text — NDC, lot, expiration, fill volume.",
-      "Then it checks that against what the order says should be there. Mismatch, it flags."
+      "Many different models together. ResNet I trained classifies the image - vial/syringe. For vials: YOLO locates the bottle and the label, EasyOCR reads the text — NDC, lot, expiration. For syringes: self developed algorithm using YOLO to find syringe lines/dosage lines and estimate volume inside.",
+      "Then it checks that against what the order says should be there. Mismatch, it flags. Important thing to note: the project is to help pharmacists detect potential errors, not make medical decisions"
     ],next:["hardest","wrong","patent"]},
-
     hardest:{chip:"What was the hardest part?",a:[
       "OCR on curved glass. Text wraps around a cylinder so it warps, and the line lighting throws glare across half of it.",
       "Flat clean text is a solved problem. Text on a moving reflective tube is not — most of my time went into preprocessing before EasyOCR ever saw a crop."
     ],next:["wrong","patent","roles"]},
-
     wrong:{chip:"Did it ever get it wrong?",a:[
       "Sure. Early on it was twitchy — flagging labels that were fine. That's its own kind of failure, because if you cry wolf enough, people stop listening.",
-      "Where you put that threshold is a real conversation. In medical a miss is worse than a false alarm, so you bias paranoid — but not so paranoid that operators start waving it through."
+      "Where you put that threshold is a real conversation. In medical a miss is worse than a false alarm."
     ],next:["hardest","patent","roles"]},
-
     patent:{chip:"Patent pending?",a:[
       "I'm a named inventor. It covers the larger inspection system my vision work sits inside.",
       "Still pending, so there's a limit to what I can say — but seeing my name on that filing as an intern was surreal."
     ],next:["how","wrong","roles"]},
 
-    /* — current work — */
-    now:{chip:"What are you working on now?",a:[
-      "Handshake AI, building training data that sharpens how coding models reason about real repositories. Project Helix, a collaboration with Anthropic, is the piece I've put the most into.",
-      "I also just wrapped a summer at Northrop Grumman writing low-level C++ for system software that talks to FPGA hardware."
-    ],next:["helix","cv_llm","cs_hw"]},
-
+    /* — side projects & AI work — */
+    side:{chip:"More on those?",say:"Tell me more about those side projects.",a:[
+      "The path tracer is physically based light transport — each pixel averages hundreds of randomly sampled ray paths, and a BVH makes it 6.24x faster than testing every object. Diffuse, metal and glass all fall out of the same bounce loop.",
+      "The car is 112 numbers. Seven distance sensors and its speed go in, steering and throttle come out, and a genetic algorithm just keeps whichever brains drove furthest — no gradients, no labels, no teacher."
+    ],next:["learn_how","tool","helix"]},
     helix:{chip:"What's Project Helix?",a:[
-      "Turning real GitHub pull requests into benchmark tasks that AI coding agents try to reproduce. Go, Python and Rust repos — temporal, karmada, streamlit, transformers, lerobot.",
+      "My main project at Handshake AI — turning real GitHub pull requests into benchmark tasks that AI coding agents try to reproduce. Go, Python and Rust repos: temporal, karmada, streamlit, transformers, lerobot.",
       "The craft is in the problem statement: enough to make the task solvable, not so much that you've handed over the implementation."
-    ],next:["now","hottake","cv_llm"]},
-
+    ],next:["now","cv_llm","learn_how"]},
     cv_llm:{chip:"Computer vision or LLMs?",a:[
       "Vision is where I go deep. LLM work is where I've learned the most about how models actually fail. I don't think you have to pick."
-    ],next:["helix","how","hottake"]},
+    ],next:["helix","how","now"]},
 
     /* — hiring — */
-    roles:{chip:"What roles?",a:[
+    roles:{chip:"What roles?",say:"What roles are you looking for?",a:[
       "Anywhere models have to survive contact with reality — computer vision, applied ML, ML engineering. I care less about the title than whether the thing ships to someone who depends on it.",
       "I'm open to lower-level and embedded work too. Northrop gave me a taste and I liked it more than I expected."
-    ],next:["when","why","cs_hw"]},
-
+    ],next:["when","proudest","now"]},
     when:{chip:"When are you free?",a:[
-      "December 2026 grad, full-time after that. Happy to talk well before then — most of the good conversations I've had started months early."
-    ],next:["roles","why","hire"]},
-
-    why:{chip:"Why you?",say:"Why should we pick you?",a:[
-      "I've shipped a model somewhere being wrong had consequences. That changes how you build.",
-      "I don't think a project is done when the metrics look good."
-    ],next:["wrong","roles","when"]},
+      "December 2026 grad, full-time after that. Happy to talk well before then — feel free to reach out to chat anytime"
+    ],next:["roles","vibe","hire"]},
 
     /* — how he works — */
     stuck:{chip:"What do you do when you're stuck?",a:[
       "Make it smaller. Usually stuck means I'm solving three problems at once and can't tell which one is broken.",
       "I strip it down to the dumbest version that still fails, and the answer tends to fall out of that."
-    ],next:["learn_how","hottake","hard"]},
-
+    ],next:["learn_how","tool","now"]},
     learn_how:{chip:"How do you learn?",a:[
       "By building. I'll take the thing apart, get it wrong somewhere I didn't expect, and come out understanding it better than any writeup would have gotten me."
-    ],next:["stuck","cs_hw","hard"]},
-
-    /* — opinions — */
-    hottake:{chip:"Hot take?",a:[
-      "Most ML projects don't die from bad models, they die from bad data. Modeling is the fun 10%.",
-      "The other 90% is making sure what you're feeding it is actually what you think it is."
-    ],next:["tool","cs_hw","wrong"]},
-
+    ],next:["stuck","now","tool"]},
     tool:{chip:"Favorite tool right now?",a:[
-      "Claude Code. It changed how much of a problem I'm willing to take on in an afternoon — which is either a great thing or a trap, and I'm still working out which."
-    ],next:["hottake","cs_hw","helix"]},
-
-    cs_hw:{chip:"CS or hardware?",a:[
-      "Came in CS, got pulled toward hardware. Writing C++ against FPGAs was humbling in a useful way — you can't hand-wave performance that close to the metal.",
-      "It changed how I write Python, too."
-    ],next:["hottake","roles","now"]}
+      "Claude Code. It changed how much of a problem I'm willing to take on in an afternoon.",
+      "It's been just as big for how I learn. Building something from scratch, I can ask why a piece works the way it does and get a real answer — so I come out actually understanding it, instead of just having it run."
+    ],next:["now","learn_how","helix"]}
 
     /* ── TO ADD ── write these in your own words, then list the id in some
        node's `next` so it becomes reachable:
@@ -1016,11 +1103,10 @@
        outside:{chip:"Outside of code?",a:["..."],next:["vibe","stuck"]},
        failure:{chip:"Biggest failure?",a:["..."],next:["stuck","wrong"]},
        redo:{chip:"What would you do differently?",a:["..."],next:["how","wrong"]},
-       learning:{chip:"Learning right now?",a:["..."],next:["cs_hw","hottake"]},
        ──────────────────────────────────────────────────────────────────── */
   };
 
-  const ROOT=["build","proudest","vibe","hire","hard"];
+  const ROOT=["build","now","proudest","vibe","hire"];
   const stream=document.getElementById('stream'),chips=document.getElementById('chips');
   const asked=new Set();
   let nudged=false;
