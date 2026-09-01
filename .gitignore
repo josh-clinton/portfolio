@@ -2,3 +2,7 @@
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# local working files (the chat-response spreadsheets, Excel lock files)
+*.xlsx
+~$*
