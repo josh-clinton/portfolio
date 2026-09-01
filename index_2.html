@@ -95,6 +95,8 @@
   .qchip{font-size:12.5px;border:1px solid var(--line);background:transparent;color:var(--text);border-radius:999px;padding:7px 13px;cursor:pointer;transition:.18s;font-family:var(--body)}
   .qchip:hover{border-color:var(--cyan);color:var(--cyan)}
   .qchip:disabled{opacity:.35;cursor:default}
+  .qchip.back{color:var(--muted);border-style:dashed}
+  .qchip.back:hover{color:var(--text);border-color:var(--muted)}
   .ask-note{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:12px;text-align:center}
 
   .section{padding:80px 0;position:relative}
@@ -310,12 +312,7 @@
           <div class="stream" id="stream">
             <div class="bub josh">Hey — pick a question and I'll tell you straight.</div>
           </div>
-          <div class="chips" id="chips">
-            <button class="qchip" data-q="What do you build?">What do you build?</button>
-            <button class="qchip" data-q="What are you proudest of?">Proudest of?</button>
-            <button class="qchip" data-q="What's your vibe?">Your vibe?</button>
-            <button class="qchip" data-q="Can I hire you?">Can I hire you?</button>
-          </div>
+          <div class="chips" id="chips"></div>
           <div class="ask-note">the full AI version of me that answers anything is in the works</div>
         </div>
       </section>
@@ -333,8 +330,8 @@
     <div class="about-grid">
       <div class="about reveal reveal-left">
         <p>I'm hooked on the exact moment an AI model stops being an experiment and starts changing something real. At <b>B. Braun</b>, that moment was watching my vision system flag a mislabeled vial that a person had missed — software quietly standing between a mistake and a patient.</p>
-        <p>I'm a CS student at <b>Penn State</b>, graduating December 2026, and almost everything I work on lives in computer vision and applied machine learning — from the medical-vision system above to training the models behind AI coding tools at <b>Handshake AI</b>. I've also got a real interest in computer engineering — my time at <b>Northrop Grumman</b> writing C++ for FPGA-based hardware has pushed me past CS into embedded systems, and given me a better feel for how software actually has to behave inside a real product.</p>
-        <p>I learn by shipping. I'd rather build the thing, watch it break out in the real world, and fix it than read three more tutorials about it.</p>
+        <p>I'm a CS student at <b>Penn State</b>, graduating December 2026, and I'm very passionate about learning the use cases for computer vision and applied machine learning — from the medical-vision system above to training the models behind AI coding tools at <b>Handshake AI</b>. I've also got a real interest in computer engineering — my time at <b>Northrop Grumman</b> writing C++ for FPGA-based hardware has pushed me past CS into embedded systems, and given me a better feel for how software actually has to behave inside a real product.</p>
+        <p>I'm a self-driven learner, and I'm always eager to pick up something new — a new corner of AI, a language I haven't touched, or a problem I don't yet know how to solve. I'm just as passionate about training my own brain as I am about training a neural network.</p>
       </div>
       <div class="photo reveal reveal-right">
         <span class="corner tl"></span><span class="corner br"></span>
@@ -887,21 +884,212 @@
     new IntersectionObserver(([e])=>{if(e.isIntersecting)xpStack.classList.add('tl-go');},{threshold:.15}).observe(xpStack);
   }
 
-  // hero chat
-  const answers={
-    "What do you build?":"AI that does something real. The project I care about most is a computer-vision system I built at B. Braun that inspects medical syringes — it catches labeling and fill defects before they ever reach a patient. That's the whole point for me: machine learning that leaves the notebook and goes to work.",
-    "What are you proudest of?":"Same system. The first time it flagged a mislabeled vial a person had missed, it hit me — this isn't a class project, it's software standing between a mistake and a patient. I'll be chasing that feeling for a long time.",
-    "What's your vibe?":"I learn by shipping. I'd rather build the thing, watch it break, and fix it than read three more tutorials. Curious, a little competitive, and genuinely happiest deep in a hard problem.",
-    "Can I hire you?":"Hopefully. I'm graduating December 2026 and looking for roles where AI actually meets the real world. My email's right below — I'd love to hear what you're building."
+  /* ── HERO CHAT ──────────────────────────────────────────────────────────
+     Branching Q&A. Each node: chip = short button label, say = what shows
+     as the visitor's message (defaults to chip), a = one or two bubbles,
+     next = follow-up node ids. Answers never dead-end: whatever a node
+     lists in `next`, plus a route back to the openers, is always offered.
+     ────────────────────────────────────────────────────────────────────── */
+  const CHAT={
+
+    /* — openers — */
+    build:{chip:"What do you build?",a:[
+      "AI that does something real. The one I care about most is a computer-vision system I built at B. Braun that inspects medical vials and syringes — it catches labeling and fill defects before they reach a patient.",
+      "That's the whole point for me: machine learning that leaves the notebook and goes to work."
+    ],next:["how","now","cv_llm"]},
+
+    proudest:{chip:"Proudest of?",say:"What are you proudest of?",a:[
+      "Same system. The first time it flagged a mislabeled vial a person had missed, it stopped being a project — that's software sitting between a mistake and a patient.",
+      "Getting there took a lot of arguing with myself about what the thing should do when it isn't sure."
+    ],next:["wrong","how","patent"]},
+
+    vibe:{chip:"Your vibe?",say:"What's your vibe?",a:[
+      "Self-driven. I'm always chasing the next thing worth learning — a new corner of AI, a language I haven't touched, a problem I don't know how to solve yet.",
+      "Just as into training my own brain as training a neural network."
+    ],next:["stuck","learn_how","hard"]},
+
+    hire:{chip:"Can I hire you?",a:[
+      "Hopefully. I graduate December 2026 and I'm looking for roles where AI meets the real world. My email's right below."
+    ],next:["roles","when","why"]},
+
+    hard:{chip:"Ask me something hard",a:[
+      "Go for it."
+    ],next:["hottake","cs_hw","tool"]},
+
+    /* — B. Braun branch — */
+    how:{chip:"How did it actually work?",a:[
+      "Camera over the line, three models doing different jobs. YOLO locates the vial and the label, a ResNet I trained classifies the product, EasyOCR reads the text — NDC, lot, expiration, fill volume.",
+      "Then it checks that against what the order says should be there. Mismatch, it flags."
+    ],next:["hardest","wrong","patent"]},
+
+    hardest:{chip:"What was the hardest part?",a:[
+      "OCR on curved glass. Text wraps around a cylinder so it warps, and the line lighting throws glare across half of it.",
+      "Flat clean text is a solved problem. Text on a moving reflective tube is not — most of my time went into preprocessing before EasyOCR ever saw a crop."
+    ],next:["wrong","patent","roles"]},
+
+    wrong:{chip:"Did it ever get it wrong?",a:[
+      "Sure. Early on it was twitchy — flagging labels that were fine. That's its own kind of failure, because if you cry wolf enough, people stop listening.",
+      "Where you put that threshold is a real conversation. In medical a miss is worse than a false alarm, so you bias paranoid — but not so paranoid that operators start waving it through."
+    ],next:["hardest","patent","roles"]},
+
+    patent:{chip:"Patent pending?",a:[
+      "I'm a named inventor. It covers the larger inspection system my vision work sits inside.",
+      "Still pending, so there's a limit to what I can say — but seeing my name on that filing as an intern was surreal."
+    ],next:["how","wrong","roles"]},
+
+    /* — current work — */
+    now:{chip:"What are you working on now?",a:[
+      "Handshake AI, building training data that sharpens how coding models reason about real repositories. Project Helix, a collaboration with Anthropic, is the piece I've put the most into.",
+      "I also just wrapped a summer at Northrop Grumman writing low-level C++ for system software that talks to FPGA hardware."
+    ],next:["helix","cv_llm","cs_hw"]},
+
+    helix:{chip:"What's Project Helix?",a:[
+      "Turning real GitHub pull requests into benchmark tasks that AI coding agents try to reproduce. Go, Python and Rust repos — temporal, karmada, streamlit, transformers, lerobot.",
+      "The craft is in the problem statement: enough to make the task solvable, not so much that you've handed over the implementation."
+    ],next:["now","hottake","cv_llm"]},
+
+    cv_llm:{chip:"Computer vision or LLMs?",a:[
+      "Vision is where I go deep. LLM work is where I've learned the most about how models actually fail. I don't think you have to pick."
+    ],next:["helix","how","hottake"]},
+
+    /* — hiring — */
+    roles:{chip:"What roles?",a:[
+      "Anywhere models have to survive contact with reality — computer vision, applied ML, ML engineering. I care less about the title than whether the thing ships to someone who depends on it.",
+      "I'm open to lower-level and embedded work too. Northrop gave me a taste and I liked it more than I expected."
+    ],next:["when","why","cs_hw"]},
+
+    when:{chip:"When are you free?",a:[
+      "December 2026 grad, full-time after that. Happy to talk well before then — most of the good conversations I've had started months early."
+    ],next:["roles","why","hire"]},
+
+    why:{chip:"Why you?",say:"Why should we pick you?",a:[
+      "I've shipped a model somewhere being wrong had consequences. That changes how you build.",
+      "I don't think a project is done when the metrics look good."
+    ],next:["wrong","roles","when"]},
+
+    /* — how he works — */
+    stuck:{chip:"What do you do when you're stuck?",a:[
+      "Make it smaller. Usually stuck means I'm solving three problems at once and can't tell which one is broken.",
+      "I strip it down to the dumbest version that still fails, and the answer tends to fall out of that."
+    ],next:["learn_how","hottake","hard"]},
+
+    learn_how:{chip:"How do you learn?",a:[
+      "By building. I'll take the thing apart, get it wrong somewhere I didn't expect, and come out understanding it better than any writeup would have gotten me."
+    ],next:["stuck","cs_hw","hard"]},
+
+    /* — opinions — */
+    hottake:{chip:"Hot take?",a:[
+      "Most ML projects don't die from bad models, they die from bad data. Modeling is the fun 10%.",
+      "The other 90% is making sure what you're feeding it is actually what you think it is."
+    ],next:["tool","cs_hw","wrong"]},
+
+    tool:{chip:"Favorite tool right now?",a:[
+      "Claude Code. It changed how much of a problem I'm willing to take on in an afternoon — which is either a great thing or a trap, and I'm still working out which."
+    ],next:["hottake","cs_hw","helix"]},
+
+    cs_hw:{chip:"CS or hardware?",a:[
+      "Came in CS, got pulled toward hardware. Writing C++ against FPGAs was humbling in a useful way — you can't hand-wave performance that close to the metal.",
+      "It changed how I write Python, too."
+    ],next:["hottake","roles","now"]}
+
+    /* ── TO ADD ── write these in your own words, then list the id in some
+       node's `next` so it becomes reachable:
+       where:{chip:"Where do you want to be?",a:["..."],next:["when","roles"]},
+       outside:{chip:"Outside of code?",a:["..."],next:["vibe","stuck"]},
+       failure:{chip:"Biggest failure?",a:["..."],next:["stuck","wrong"]},
+       redo:{chip:"What would you do differently?",a:["..."],next:["how","wrong"]},
+       learning:{chip:"Learning right now?",a:["..."],next:["cs_hw","hottake"]},
+       ──────────────────────────────────────────────────────────────────── */
   };
+
+  const ROOT=["build","proudest","vibe","hire","hard"];
   const stream=document.getElementById('stream'),chips=document.getElementById('chips');
-  function add(cls,txt){const b=document.createElement('div');b.className='bub '+cls;b.textContent=txt;stream.appendChild(b);stream.scrollTop=stream.scrollHeight;}
+  const asked=new Set();
+  let nudged=false;
+
+  const add=(cls,txt)=>{
+    const b=document.createElement('div');b.className='bub '+cls;b.textContent=txt;
+    stream.appendChild(b);stream.scrollTop=stream.scrollHeight;return b;
+  };
+  // longer answers take longer to "type" — a fixed delay is the giveaway
+  const pause=t=>Math.min(1400,420+t.length*7);
+
+  function typing(){
+    const t=document.createElement('div');t.className='typing';
+    t.innerHTML='<span></span><span></span><span></span>';
+    stream.appendChild(t);stream.scrollTop=stream.scrollHeight;return t;
+  }
+
+  const unasked=ids=>ids.filter(id=>CHAT[id]&&!asked.has(id));
+
+  // each question is offered once; asked ones drop out of the list for good
+  function renderChips(ids,atRoot){
+    chips.innerHTML='';
+    const seen=new Set();
+    unasked(ids).forEach(id=>{
+      if(seen.has(id))return;seen.add(id);
+      const b=document.createElement('button');
+      b.className='qchip';b.dataset.id=id;b.textContent=CHAT[id].chip;
+      chips.appendChild(b);
+    });
+    // no way "back" from the openers — that is already where back goes.
+    // elsewhere, offer it while anything outside this list is still unasked
+    if(!atRoot&&unasked(Object.keys(CHAT)).length>chips.children.length){
+      const back=document.createElement('button');
+      back.className='qchip back';back.dataset.id='__root';back.textContent='Something else';
+      chips.appendChild(back);
+    }
+  }
+
+  // play a node's bubbles one at a time, then offer its follow-ups
+  function say(lines,i,then){
+    if(i>=lines.length){then();return;}
+    const t=typing();
+    setTimeout(()=>{t.remove();add('josh',lines[i]);say(lines,i+1,then);},pause(lines[i]));
+  }
+
+  // show a node's follow-ups; if every question has been used up, sign off
+  function offer(next){
+    renderChips(next);
+    if(chips.children.length)return;
+    const t=typing();
+    setTimeout(()=>{
+      t.remove();
+      add('josh',"That's everything I've got canned. Anything else, email me — I'd rather answer it properly anyway.");
+    },700);
+  }
+
+  function ask(id){
+    if(id==='__root'){
+      // back to the openers, or whatever is left once those run out
+      const pool=unasked(ROOT);
+      renderChips(pool.length?pool:unasked(Object.keys(CHAT)).slice(0,4),true);
+      return;
+    }
+    const node=CHAT[id];if(!node)return;
+    asked.add(id);
+    add('you',node.say||node.chip);
+    chips.innerHTML='';
+    say(node.a,0,()=>{
+      // after a real conversation, point at the thing that actually replies
+      if(asked.size>=5&&!nudged){
+        nudged=true;
+        const t=typing();
+        setTimeout(()=>{
+          t.remove();
+          add('josh',"We're a few questions deep — at this point you may as well just email me. The button's at the bottom of the page.");
+          offer(node.next);
+        },900);
+      } else offer(node.next);
+    });
+  }
+
   chips.addEventListener('click',e=>{
     const btn=e.target.closest('.qchip');if(!btn)return;
-    const q=btn.dataset.q;btn.disabled=true;add('you',q);
-    const t=document.createElement('div');t.className='typing';t.innerHTML='<span></span><span></span><span></span>';stream.appendChild(t);stream.scrollTop=stream.scrollHeight;
-    setTimeout(()=>{t.remove();add('josh',answers[q]||"Ask away.");},700);
+    ask(btn.dataset.id);
   });
+
+  renderChips(ROOT,true);
 </script>
 </body>
 </html>
