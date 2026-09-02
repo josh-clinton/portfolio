@@ -1027,7 +1027,7 @@
     build:{chip:"What do you build?",a:[
       "AI that does something real. The one I care about most is a computer-vision system I built at B. Braun that inspects medical vials and syringes — it catches labeling and fill defects before they reach a patient.",
       "That's the whole point for me: machine learning that leaves the notebook and goes to work."
-    ],next:["how","now","cv_llm"]},
+    ],next:["how","now","proudest"]},
     now:{chip:"What are you working on now?",a:[
       "Mostly side projects. I'm learning ray tracing by writing a Monte Carlo path tracer in C++ from scratch, and I've got a car that teaches itself to drive — a neural net and a genetic algorithm, no PyTorch anywhere.",
       "Both exist to understand how something works, not to use it. I'm a self-driven learner — building the thing from scratch is the only way it really sticks."
@@ -1041,7 +1041,7 @@
       "Just as into training my own brain as training a neural network."
     ],next:["stuck","learn_how","now"]},
     hire:{chip:"Can I hire you?",a:[
-      "Hopefully. I graduate December 2026 and I'm looking for roles where AI meets the real world. My email's right below."
+      "Absolutely. I graduate December 2026 and I'm looking for roles where AI meets the real world. My email's right below."
     ],next:["roles","when","proudest"]},
 
     /* — B. Braun branch — */
@@ -1062,18 +1062,11 @@
       "Still pending, so there's a limit to what I can say — but seeing my name on that filing as an intern was surreal."
     ],next:["how","wrong","roles"]},
 
-    /* — side projects & AI work — */
+    /* — side projects — */
     side:{chip:"More on those?",say:"Tell me more about those side projects.",a:[
       "The path tracer is physically based light transport — each pixel averages hundreds of randomly sampled ray paths, and a BVH makes it 6.24x faster than testing every object. Diffuse, metal and glass all fall out of the same bounce loop.",
       "The car is 112 numbers. Seven distance sensors and its speed go in, steering and throttle come out, and a genetic algorithm just keeps whichever brains drove furthest — no gradients, no labels, no teacher."
-    ],next:["learn_how","tool","helix"]},
-    helix:{chip:"What's Project Helix?",a:[
-      "My main project at Handshake AI — turning real GitHub pull requests into benchmark tasks that AI coding agents try to reproduce. Go, Python and Rust repos: temporal, karmada, streamlit, transformers, lerobot.",
-      "The craft is in the problem statement: enough to make the task solvable, not so much that you've handed over the implementation."
-    ],next:["now","cv_llm","learn_how"]},
-    cv_llm:{chip:"Computer vision or LLMs?",a:[
-      "Vision is where I go deep. LLM work is where I've learned the most about how models actually fail. I don't think you have to pick."
-    ],next:["helix","how","now"]},
+    ],next:["learn_how","tool","stuck"]},
 
     /* — hiring — */
     roles:{chip:"What roles?",say:"What roles are you looking for?",a:[
@@ -1095,7 +1088,7 @@
     tool:{chip:"Favorite tool right now?",a:[
       "Claude Code. It changed how much of a problem I'm willing to take on in an afternoon.",
       "It's been just as big for how I learn. Building something from scratch, I can ask why a piece works the way it does and get a real answer — so I come out actually understanding it, instead of just having it run."
-    ],next:["now","learn_how","helix"]}
+    ],next:["now","learn_how","stuck"]}
 
     /* ── TO ADD ── write these in your own words, then list the id in some
        node's `next` so it becomes reachable:
