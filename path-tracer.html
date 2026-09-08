@@ -1,0 +1,459 @@
+<title>Monte Carlo Path Tracer</title>
+<style>
+  :root {
+    --bg: #f3f5f7;
+    --surface: #ffffff;
+    --surface-2: #eceff2;
+    --text: #14181d;
+    --text-muted: #5b6570;
+    --border: #dbe1e6;
+    --accent: #c06a2c;
+    --accent-ink: #7a4319;
+    --sky: #4f7fb0;
+    --good: #3f7d5c;
+    --code-bg: #0f1215;
+    --code-text: #dce3e9;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0d10;
+      --surface: #14171b;
+      --surface-2: #191d22;
+      --text: #eef1f4;
+      --text-muted: #9aa4ad;
+      --border: #262b31;
+      --accent: #e0954f;
+      --accent-ink: #f6cda2;
+      --sky: #7fb0e8;
+      --good: #6fc79a;
+      --code-bg: #08090b;
+      --code-text: #cbd3da;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0b0d10;
+    --surface: #14171b;
+    --surface-2: #191d22;
+    --text: #eef1f4;
+    --text-muted: #9aa4ad;
+    --border: #262b31;
+    --accent: #e0954f;
+    --accent-ink: #f6cda2;
+    --sky: #7fb0e8;
+    --good: #6fc79a;
+    --code-bg: #08090b;
+    --code-text: #cbd3da;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.6;
+  }
+
+  .mono {
+    font-family: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  h1, h2, h3 {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--text);
+  }
+
+  a { color: var(--sky); }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+
+  /* ---------- hero ---------- */
+
+  header.hero {
+    padding: 56px 24px 28px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+
+  header.hero h1 {
+    font-size: clamp(1.9rem, 4vw, 2.7rem);
+    margin: 0 0 12px;
+  }
+
+  header.hero p.dek {
+    max-width: 640px;
+    margin: 0 auto;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  figure.render {
+    max-width: 880px;
+    margin: 32px auto 0;
+    padding: 0;
+  }
+
+  figure.render img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .statstrip {
+    margin-top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 0 0 6px 6px;
+    overflow: hidden;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem;
+  }
+
+  .statstrip div {
+    flex: 1 1 auto;
+    padding: 12px 18px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+  }
+  .statstrip div:last-child { border-right: none; }
+  .statstrip .k { color: #7a8590; display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px; }
+  .statstrip .v { font-variant-numeric: tabular-nums; }
+
+  /* ---------- sections ---------- */
+
+  section { margin-top: 56px; }
+
+  section > h2 {
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+
+  p { color: var(--text); }
+  p.lead { font-size: 1.02rem; }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 16px 20px;
+    color: var(--text);
+    font-size: 0.96rem;
+  }
+
+  /* ---------- mapping table ---------- */
+
+  .table-scroll { overflow-x: auto; }
+
+  table.map {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.92rem;
+  }
+
+  table.map th {
+    text-align: left;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  table.map td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.map tr:last-child td { border-bottom: none; }
+
+  .status {
+    display: inline-block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .status.done { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+  .status.next { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent-ink); }
+
+  /* ---------- benchmark bars ---------- */
+
+  .bench {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 22px 24px 20px;
+  }
+
+  .bench-row { margin-bottom: 16px; }
+  .bench-row:last-of-type { margin-bottom: 0; }
+
+  .bench-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+  }
+  .bench-label .val { font-variant-numeric: tabular-nums; color: var(--text-muted); }
+
+  .bench-track {
+    height: 12px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bench-fill { height: 100%; border-radius: 3px; }
+  .bench-fill.slow { background: var(--text-muted); width: 100%; }
+  .bench-fill.fast { background: var(--accent); width: 16%; }
+  .bench-fill.rr-baseline { background: var(--text-muted); width: 100%; }
+  .bench-fill.rr-reservoir { background: var(--sky); width: 51%; }
+  .bench-fill.rr-spatial { background: var(--good); width: 48%; }
+
+  .bench-note {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    font-size: 0.88rem;
+    color: var(--text-muted);
+  }
+  .bench-note strong { color: var(--accent-ink); font-family: "IBM Plex Mono", monospace; }
+
+  /* ---------- architecture list ---------- */
+
+  .filelist {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 6px;
+    padding: 18px 22px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.84rem;
+    overflow-x: auto;
+  }
+  .filelist .row { display: flex; gap: 18px; padding: 3px 0; white-space: nowrap; }
+  .filelist .fname { color: var(--accent-ink); min-width: 168px; }
+  .filelist .fdesc { color: #9aa4ad; white-space: normal; }
+
+  /* ---------- roadmap ---------- */
+
+  .roadmap { display: flex; flex-direction: column; gap: 14px; }
+  .rm-item {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+  }
+  .rm-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--sky);
+    padding-top: 2px;
+  }
+  .rm-body h3 { margin: 0 0 4px; font-size: 0.98rem; font-family: "IBM Plex Sans", sans-serif; font-weight: 600; }
+  .rm-body p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  @media (max-width: 620px) {
+    .statstrip { font-size: 0.72rem; }
+    .rm-item { grid-template-columns: 1fr; }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<header class="hero">
+  <p class="eyebrow">Learning project &middot; ray tracing from first principles</p>
+  <h1>Monte Carlo Path Tracer</h1>
+  <p class="dek">A from-scratch, multithreaded C++17 renderer built to learn the fundamentals behind real-time ray tracing &mdash; global illumination, physically based materials, and acceleration structures &mdash; and then to carry them into the resampling techniques real-time renderers actually lean on.</p>
+
+  <figure class="render">
+    <img src="raytracer.png" alt="Rendered scene: nearly 500 spheres with diffuse, metal, and glass materials on a ground plane, three large feature spheres in the foreground, soft depth-of-field background.">
+    <div class="statstrip">
+      <div><span class="k">Resolution</span><span class="v">800 &times; 450</span></div>
+      <div><span class="k">Samples / px</span><span class="v">100</span></div>
+      <div><span class="k">Max depth</span><span class="v">12 bounces</span></div>
+      <div><span class="k">Objects</span><span class="v">487 spheres</span></div>
+      <div><span class="k">Render time</span><span class="v">28.1s</span></div>
+      <div><span class="k">Hardware</span><span class="v">2 CPU threads</span></div>
+    </div>
+  </figure>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>What this is</h2>
+    <p class="lead">I wanted to actually understand ray tracing &mdash; not just the vocabulary &mdash; so I built a path tracer from first principles: rays, intersection math, Monte Carlo sampling, physically based materials, and a spatial acceleration structure, all measured and benchmarked rather than taken on faith.</p>
+    <div class="callout">Every pixel in the render above is the average of 100 independently sampled light paths, each bouncing up to 12 times through the scene &mdash; diffuse, metal, and glass surfaces all obey the same underlying light-transport integral, just with different scattering rules.</div>
+  </section>
+
+  <section>
+    <h2>What it demonstrates</h2>
+    <div class="table-scroll">
+      <table class="map">
+        <thead>
+          <tr><th>Area</th><th>Where it shows up here</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Light transport &amp; physically based materials</td>
+            <td>Ray&ndash;sphere intersection, recursive path tracing, Lambertian / metal / dielectric BRDFs, indirect light from pure ray bounces</td>
+            <td><span class="status done">demonstrated</span></td>
+          </tr>
+          <tr>
+            <td>Data structures &amp; performance</td>
+            <td>Bounding volume hierarchy, multithreaded render loop, zero warnings under <span class="mono">-Wall&nbsp;-Wextra</span></td>
+            <td><span class="status done">demonstrated</span></td>
+          </tr>
+          <tr>
+            <td>Profiling &amp; benchmarking</td>
+            <td>Built-in <span class="mono">--benchmark</span> mode measuring BVH vs. linear-scan intersection cost</td>
+            <td><span class="status done">demonstrated</span></td>
+          </tr>
+          <tr>
+            <td>GPU acceleration</td>
+            <td>Not yet &mdash; next step is a HIP / ROCm port of this same ray gen &rarr; intersect &rarr; shade loop, running natively on an RX&nbsp;9060&nbsp;XT (RDNA4)</td>
+            <td><span class="status next">next up</span></td>
+          </tr>
+          <tr>
+            <td>Resampled direct lighting (ReSTIR)</td>
+            <td>Resampled importance sampling (weighted reservoir sampling, Bitterli et al. 2020) for direct lighting, plus spatial reuse of neighboring pixels' reservoirs &mdash; measured up to 1.96&times; lower MSE than uniform-pick NEE at equal sample counts.</td>
+            <td><span class="status done">demonstrated</span></td>
+          </tr>
+          <tr>
+            <td>Neural rendering</td>
+            <td>Not yet &mdash; plan to train a small NeRF / Gaussian Splatting reproduction on views rendered by this tracer</td>
+            <td><span class="status next">next up</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why the BVH matters</h2>
+    <p>Without an acceleration structure, testing a ray against a scene costs O(N) &mdash; every object, every ray. A bounding volume hierarchy lets a ray that misses a bounding box skip everything inside it, which is the same underlying idea GPU ray-tracing hardware accelerates in silicon. I measured it directly on this scene's 487 spheres:</p>
+
+    <div class="bench">
+      <div class="bench-row">
+        <div class="bench-label"><span>Linear scan (no BVH)</span><span class="val mono">8.51s</span></div>
+        <div class="bench-track"><div class="bench-fill slow"></div></div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-label"><span>BVH-accelerated</span><span class="val mono">1.36s</span></div>
+        <div class="bench-track"><div class="bench-fill fast"></div></div>
+      </div>
+      <div class="bench-note">Same 487-sphere scene, same 300&times;168 / 32&nbsp;spp / depth&nbsp;8 settings &mdash; the BVH alone is a <strong>6.24&times;</strong> speedup, and the gap widens as scene complexity grows.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why RIS + spatial reuse matters</h2>
+    <p>Direct lighting means picking a light and testing whether it's visible &mdash; but a scene with dozens of small lights makes blind uniform picking noisy, since most picks land on a light that barely matters from a given shading point. Resampled importance sampling (RIS) scores several candidate lights per hit and streams them through a weighted reservoir (Bitterli et al., ReSTIR 2020) so the one candidate that pays for a shadow ray is whichever actually looked promising &mdash; same one-shadow-ray-per-hit cost as before, just aimed better. Spatial reuse then lets a pixel fold in its already-built neighbors' reservoirs as free extra candidates, rejecting any neighbor across a normal or depth discontinuity so reuse can't leak across a silhouette. I measured both against a uniform-pick baseline with an MSE sweep across light counts and sample budgets (<span class="mono">benchmarks/mse_sweep.py</span>):</p>
+
+    <div class="bench">
+      <div class="bench-row">
+        <div class="bench-label"><span>Baseline (uniform-pick NEE)</span><span class="val mono">MSE 39.4</span></div>
+        <div class="bench-track"><div class="bench-fill rr-baseline"></div></div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-label"><span>Reservoir (RIS)</span><span class="val mono">MSE 20.1</span></div>
+        <div class="bench-track"><div class="bench-fill rr-reservoir"></div></div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-label"><span>Reservoir + spatial reuse</span><span class="val mono">MSE 19.1</span></div>
+        <div class="bench-track"><div class="bench-fill rr-spatial"></div></div>
+      </div>
+      <div class="bench-note">32-light scene, 64 samples/pixel, mean of 3 runs against a 400-spp reference &mdash; RIS alone is <strong>1.96&times;</strong> lower MSE than uniform picking at equal sample count, and the gap widens with light count: negligible at 1 light (nothing to pick between), up to that 1.96&times; at 32. Spatial reuse adds a further, smaller gain here &mdash; this scene's dense field of small, differently shaded spheres trips the normal/depth reject checks often, correctly declining to reuse across nearby discontinuities rather than pointing at a flaw in the technique.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Project architecture</h2>
+    <div class="filelist">
+      <div class="row"><span class="fname">vec3.h</span><span class="fdesc">3D vector math + Monte Carlo sampling helpers</span></div>
+      <div class="row"><span class="fname">ray.h</span><span class="fdesc">Parametric ray: origin + t &times; direction</span></div>
+      <div class="row"><span class="fname">interval.h / aabb.h</span><span class="fdesc">Range utility + axis-aligned bounding box (BVH primitive)</span></div>
+      <div class="row"><span class="fname">hittable.h / sphere.h</span><span class="fdesc">Intersectable interface + ray&ndash;sphere intersection, plus solid-angle sampling of a sphere seen as a light</span></div>
+      <div class="row"><span class="fname">bvh.h</span><span class="fdesc">Bounding volume hierarchy for O(log N) intersection</span></div>
+      <div class="row"><span class="fname">material.h</span><span class="fdesc">Lambertian, Metal, and Dielectric BRDFs, and emissive lights</span></div>
+      <div class="row"><span class="fname">onb.h</span><span class="fdesc">Orthonormal basis for local &rarr; world direction transforms</span></div>
+      <div class="row"><span class="fname">reservoir.h</span><span class="fdesc">Weighted reservoir sampling &mdash; streaming selection, unbiased contribution weight, and the combine rule spatial reuse merges neighbours with</span></div>
+      <div class="row"><span class="fname">camera.h</span><span class="fdesc">Camera model, two-phase threaded render loop, next-event estimation, RIS and spatial reuse</span></div>
+      <div class="row"><span class="fname">main.cpp</span><span class="fdesc">Scene construction, CLI, benchmark mode</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's next</h2>
+    <div class="roadmap">
+      <div class="rm-item">
+        <div class="rm-tag">GPU port</div>
+        <div class="rm-body"><h3>Move the render loop onto the GPU with HIP</h3><p>Port ray gen &rarr; intersect &rarr; shade into raw HIP kernels on an RX&nbsp;9060&nbsp;XT, hand-writing the BVH traversal first so the algorithm is mine rather than the API's, then profile it on a real GPU timeline.</p></div>
+      </div>
+      <div class="rm-item">
+        <div class="rm-tag">Hardware RT</div>
+        <div class="rm-body"><h3>Compare hand-written traversal against HIPRT</h3><p>Once the HIP port runs, bring in HIPRT &mdash; AMD's open-source ray tracing SDK &mdash; as a second traversal mode, and measure what hardware-accelerated BVH traversal actually buys over the kernels I wrote myself.</p></div>
+      </div>
+      <div class="rm-item">
+        <div class="rm-tag">Neural rendering</div>
+        <div class="rm-body"><h3>Train a small NeRF or Gaussian Splatting reproduction</h3><p>Generate the multi-view training data with this same path tracer &mdash; the renderer generating the training data the model learns from.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Full source, the reading-order learning roadmap, and worked references for the BVH and ReSTIR math: <a href="https://github.com/josh-clinton/raytracer" target="_blank" rel="noopener">github.com/josh-clinton/raytracer</a>
+  </footer>
+
+</div>
